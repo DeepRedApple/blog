@@ -12,6 +12,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * 权限配置
+ * @author lizhenghao
+ */
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private static final String KEY = "waylau.com";
@@ -23,15 +27,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private PasswordEncoder passwordEncoder;
 
 	@Bean  
-	public PasswordEncoder passwordEncoder() {  
-	    return new BCryptPasswordEncoder();   // 使用 BCrypt 加密
+	public PasswordEncoder passwordEncoder() {
+		// 使用 BCrypt 加密
+	    return new BCryptPasswordEncoder();
 	}  
 
 	@Bean  
 	public AuthenticationProvider authenticationProvider() {  
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 		authenticationProvider.setUserDetailsService(userDetailsService);
-		authenticationProvider.setPasswordEncoder(passwordEncoder); // 设置密码加密方式
+		// 设置密码加密方式
+		authenticationProvider.setPasswordEncoder(passwordEncoder);
 	    return authenticationProvider;  
 	} 
 	
@@ -40,22 +46,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-    	http.authorizeRequests().antMatchers("/css/**", "/js/**", "/fonts/**", "/index").permitAll() // 都可以访问
-    			.antMatchers("/h2-console/**").permitAll() // 都可以访问
-    			.antMatchers("/admins/**").hasRole("ADMIN") // 需要相应的角色才能访问
+		// 都可以访问
+    	http.authorizeRequests().antMatchers("/css/**", "/js/**", "/fonts/**", "/index").permitAll()
+    			.antMatchers("/h2-console/**").permitAll()
+				// 需要相应的角色才能访问
+    			.antMatchers("/admins/**").hasRole("ADMIN")
     			.and()
-    			.formLogin()   //基于 Form 表单登录验证
-    			.loginPage("/login").failureUrl("/login-error") // 自定义登录界面
-    			.and().rememberMe().key(KEY) // 启用 remember me
-    			.and().exceptionHandling().accessDeniedPage("/403");  // 处理异常，拒绝访问就重定向到 403 页面
-    	http.csrf().ignoringAntMatchers("/h2-console/**"); // 禁用 H2 控制台的 CSRF 防护
-    	http.headers().frameOptions().sameOrigin(); // 允许来自同一来源的H2 控制台的请求
+				//基于 Form 表单登录验证
+    			.formLogin()
+				// 自定义登录界面
+    			.loginPage("/login").failureUrl("/login-error")
+				// 启用 remember me
+    			.and().rememberMe().key(KEY)
+				// 处理异常，拒绝访问就重定向到 403 页面
+    			.and().exceptionHandling().accessDeniedPage("/403");
+		// 禁用 H2 控制台的 CSRF 防护
+    	http.csrf().ignoringAntMatchers("/h2-console/**");
+		// 允许来自同一来源的H2 控制台的请求
+    	http.headers().frameOptions().sameOrigin();
     }
     
     /**
      * 认证信息管理
-     * @param auth
-     * @throws Exception
+     * @param auth 认证信息
+     * @throws Exception 异常
      */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {

@@ -10,13 +10,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * 后台页面
+ * @author lizhenghao
+ */
 @Controller
 @RequestMapping("/admins")
 public class AdminController {
  
 	/**
 	 * 获取后台管理主页面
-	 * @return
+	 * @return ModelAndView
 	 */
 	@GetMapping
 	public ModelAndView listUsers(Model model) {

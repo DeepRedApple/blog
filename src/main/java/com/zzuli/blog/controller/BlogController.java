@@ -18,9 +18,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
+/**
+ * 博客管理控制页面
+ * @author lizhenghao
+ */
 @Controller
 @RequestMapping("/blogs")
 public class BlogController {
+
+    private static final String HOT = "hot";
+    private static final String NEW = "new";
 	
 	@Autowired
     private EsBlogService esBlogService;
@@ -37,13 +44,16 @@ public class BlogController {
         Page<EsBlog> blogPage = null;
         List<EsBlog> list = null;
         pageIndex = pageIndex - 1;
-        boolean isEmpty = true; // 系统初始化时，没有博客数据
+        // 系统初始化时，没有博客数据
+        boolean isEmpty = true;
         try {
-            if (order.equals("hot")) { // 最热查询
+            // 最热查询
+            if (order.equals(HOT)) {
                 Sort sort = new Sort(Direction.DESC,"readSize","commentSize","voteSize","createTime"); 
                 Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
                 blogPage = esBlogService.listHotestEsBlogs(keyword, pageable);
-            } else if (order.equals("new")) { // 最新查询
+                // 最新查询
+            } else if (order.equals(NEW)) {
                 Sort sort = new Sort(Direction.DESC,"createTime"); 
                 Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
                 blogPage = esBlogService.listNewestEsBlogs(keyword, pageable);
@@ -53,9 +63,10 @@ public class BlogController {
         } catch (Exception e) {
             Pageable pageable = PageRequest.of(pageIndex, pageSize);
             blogPage = esBlogService.listEsBlogs(pageable);
-        }  
+        }
 
-        list = blogPage.getContent();   // 当前所在页面数据列表
+        // 当前所在页面数据列表
+        list = blogPage.getContent();
 
         com.zzuli.blog.util.Page<EsBlog> page = new com.zzuli.blog.util.Page<EsBlog>(pageIndex, pageSize,
                 (int) blogPage.getTotalElements(), blogPage.getContent());
