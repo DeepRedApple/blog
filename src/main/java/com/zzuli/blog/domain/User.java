@@ -14,10 +14,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,7 +40,7 @@ public class User implements UserDetails {
 
 	@NotEmpty(message = "邮箱不能为空")
 	@Size(max=50)
-	@Email(message= "邮箱格式不对" ) 
+	@Email(message= "邮箱格式不对" )
 	@Column(nullable = false, length = 50, unique = true)
 	private String email;
 	
