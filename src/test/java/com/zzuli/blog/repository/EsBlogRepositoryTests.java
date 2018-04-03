@@ -10,15 +10,12 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MoreLikeThisQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
-import org.elasticsearch.search.suggest.Suggest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +30,10 @@ import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 
@@ -181,14 +181,7 @@ public class EsBlogRepositoryTests {
 			QueryBuilder queryBuilder = multiMatchQuery(keyword, "title", "summary", "content", "tags");
 			nativeSearchQueryBuilder.withQuery(queryBuilder);
 		}
-		SearchQuery searchQuery = nativeSearchQueryBuilder
-//				.withHighlightFields(
-//						new HighlightBuilder.Field("title").preTags("<span style='color:red'>").postTags("</span>"),
-//						new HighlightBuilder.Field("summary").preTags("<span style='color:red'>").postTags("</span>"),
-//						new HighlightBuilder.Field("content").preTags("<span style='color:red'>").postTags("</span>"),
-//						new HighlightBuilder.Field("tags").preTags("<span style='color:red'>").postTags("</span>")
-//						)
-				.build();
+		SearchQuery searchQuery = nativeSearchQueryBuilder.build();
 		Page<EsBlog> page = elasticsearchTemplate.queryForPage(searchQuery, EsBlog.class);
 		System.out.println("size: " + page.getSize());
 		System.out.println("TotalPages: " + page.getTotalPages());
@@ -228,6 +221,7 @@ public class EsBlogRepositoryTests {
 		SearchHits searchHits = searchResponse.getHits();
 		//获取总数
 		long count = searchHits.totalHits;
+		System.out.println("COUNT: " + count);
 		SearchHit[] hits = searchHits.getHits();
 		ObjectMapper mapper = new ObjectMapper();
 		List<EsBlog> contentList = new ArrayList<>(hits.length);

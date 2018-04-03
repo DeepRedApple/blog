@@ -50,9 +50,6 @@ public class User implements UserDetails {
 	@JoinTable(name = "user_authority", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), 
 		inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
 	private List<Authority> authorities;
-
-	@OneToMany(mappedBy = "score", cascade = CascadeType.ALL)
-	private Set<Score> scores = new HashSet<Score>();
 	
 	protected User() { // 无参构造函数;设为 protected 防止直接使用
 	}
@@ -139,14 +136,6 @@ public class User implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
-	}
-
-	public Set<Score> getScores() {
-		return scores;
-	}
-
-	public void setScores(Set<Score> scores) {
-		this.scores = scores;
 	}
 
 	@Override
