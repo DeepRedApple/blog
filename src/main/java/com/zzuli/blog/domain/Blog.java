@@ -2,7 +2,9 @@ package com.zzuli.blog.domain;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -88,6 +90,9 @@ public class Blog implements Serializable {
 	@OneToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
 	@JoinColumn(name="catalog_id")
 	private Catalog catalog;
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private Set<User> users = new HashSet<User>();
 	
 	protected Blog() {
 	
@@ -189,7 +194,6 @@ public class Blog implements Serializable {
 
 	/**
 	 * 删除评论
-	 * @param comment
 	 */
 	public void removeComment(Long commentId) {
 		for (int index=0; index < this.comments.size(); index ++ ) {
@@ -254,5 +258,13 @@ public class Blog implements Serializable {
 	
 	public void setCatalog(Catalog catalog) {
 		this.catalog = catalog;
+	}
+
+	public Set<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(Set<User> users) {
+		this.users = users;
 	}
 }
