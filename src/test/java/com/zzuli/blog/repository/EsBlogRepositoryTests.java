@@ -11,7 +11,6 @@ import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -31,12 +30,12 @@ import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -205,13 +204,16 @@ public class EsBlogRepositoryTests {
 
 	@Test
 	public void test6() throws IOException {
-		String keyword = "数据持久化";
+		String keyword = "Web框架";
 		SearchRequestBuilder searchRequestBuilder = elasticsearchTemplate.getClient().prepareSearch("blog");
 		searchRequestBuilder.setTypes("blog");
 		//设置查询类型 DFS_QUERY_THEN_FETCH 精确查询 SCAN 扫描查询无序
 		searchRequestBuilder.setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
 		//设置要查询的关键词
-		searchRequestBuilder.setQuery(multiMatchQuery(keyword, "title", "summary", "content", "tags"));
+		if (StringUtils.isNotEmpty(keyword)) {
+			searchRequestBuilder.setQuery(multiMatchQuery(keyword, "title", "summary", "content", "tags"));
+		}
+//		searchRequestBuilder.setQuery(multiMatchQuery(keyword, "title", "summary", "content", "tags"));
 		//分页
 		searchRequestBuilder.setFrom(2).setSize(2); //searchRequestBuilder.setFrom((pageNo - 1) * pageSize).setSize(pageSize)
 		searchRequestBuilder.addSort("createTime", SortOrder.DESC);
@@ -227,6 +229,7 @@ public class EsBlogRepositoryTests {
 		SearchHits searchHits = searchResponse.getHits();
 		SearchHit[] hits = searchHits.getHits();
 		ObjectMapper mapper = new ObjectMapper();
+		List<EsBlog> contentList = new ArrayList<>(hits.length);
 		for (int i = 0; i < hits.length; i++) {
 			SearchHit hit = hits[i];
 			String json = hit.getSourceAsString();
@@ -272,15 +275,8 @@ public class EsBlogRepositoryTests {
 				}
 				esBlog.setContent(contentStr);
 			}
-
 			System.out.println(esBlog.getTitle());
-			System.out.println(esBlog.getTags());
-			System.out.println(esBlog.getSummary());
-			System.out.println(esBlog.getContent());
+			contentList.add(esBlog);
 		}
-
 	}
-
-
-
 }
