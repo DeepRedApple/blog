@@ -10,12 +10,15 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MoreLikeThisQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.search.suggest.Suggest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -242,36 +245,36 @@ public class EsBlogRepositoryTests {
 				Text[] textsTags = tags.getFragments();
 				String tagsStr = "";
 				for (Text text : textsTags) {
-					tagsStr += text;
+					tagsStr += (text + "...");
 				}
-				esBlog.setTags(tagsStr);
+				esBlog.setTags("..." + tagsStr);
 			}
 
 			if (null != title) {
 				Text[] textsTitle = title.getFragments();
 				String titleStr = "";
 				for (Text text : textsTitle) {
-					titleStr += text;
+					titleStr += (text + "...");
 				}
-				esBlog.setTitle(titleStr);
+				esBlog.setTitle("..." + titleStr);
 			}
 
 			if (null  != summary) {
 				Text[] textSummary = summary.getFragments();
 				String summaryStr = "";
 				for (Text text : textSummary) {
-					summaryStr += text;
+					summaryStr += (text + "...");
 				}
-				esBlog.setSummary(summaryStr);
+				esBlog.setSummary("..." + summaryStr);
 			}
 
 			if (null != content) {
 				Text[] textContent = content.getFragments();
 				String contentStr = "";
 				for (Text text : textContent) {
-					contentStr += text;
+					contentStr += (text + "...");
 				}
-				esBlog.setContent(contentStr);
+				esBlog.setContent("..." + contentStr);
 			}
 			System.out.println(esBlog.getTitle());
 			contentList.add(esBlog); //已经替换成了高亮后的内容
