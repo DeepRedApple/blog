@@ -30,10 +30,7 @@ import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 
@@ -213,9 +210,8 @@ public class EsBlogRepositoryTests {
 		if (StringUtils.isNotEmpty(keyword)) {
 			searchRequestBuilder.setQuery(multiMatchQuery(keyword, "title", "summary", "content", "tags"));
 		}
-//		searchRequestBuilder.setQuery(multiMatchQuery(keyword, "title", "summary", "content", "tags"));
 		//分页
-		searchRequestBuilder.setFrom(2).setSize(2); //searchRequestBuilder.setFrom((pageNo - 1) * pageSize).setSize(pageSize)
+		searchRequestBuilder.setFrom(0).setSize(2); //searchRequestBuilder.setFrom((pageNo - 1) * pageSize).setSize(pageSize)
 		searchRequestBuilder.addSort("createTime", SortOrder.DESC);
 		//是否按照匹配度排序
 		searchRequestBuilder.setExplain(true);
@@ -227,6 +223,8 @@ public class EsBlogRepositoryTests {
 		//设置高亮
 		SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
 		SearchHits searchHits = searchResponse.getHits();
+		//获取总数
+		long count = searchHits.totalHits;
 		SearchHit[] hits = searchHits.getHits();
 		ObjectMapper mapper = new ObjectMapper();
 		List<EsBlog> contentList = new ArrayList<>(hits.length);
@@ -276,7 +274,7 @@ public class EsBlogRepositoryTests {
 				esBlog.setContent(contentStr);
 			}
 			System.out.println(esBlog.getTitle());
-			contentList.add(esBlog);
+			contentList.add(esBlog); //已经替换成了高亮后的内容
 		}
 	}
 }
