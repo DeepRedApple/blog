@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -28,6 +29,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -288,5 +290,13 @@ public class EsBlogRepositoryTests {
 		indexQuery.setObject(blog);
 		elasticsearchTemplate.index(indexQuery); //更新id
 		elasticsearchTemplate.refresh("blog");
+        blog.setTags("tagss");
+        indexQuery.setObject(blog);
+		elasticsearchTemplate.index(indexQuery); //更新
 	}
+
+	@Test
+    public void deleteTest() {
+	    elasticsearchTemplate.delete("blog", "blog", "AWKPTYx-IHXrs5-UMOsy"); //删除
+    }
 }
