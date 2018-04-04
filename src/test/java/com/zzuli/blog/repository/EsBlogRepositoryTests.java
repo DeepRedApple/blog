@@ -25,11 +25,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -273,5 +275,18 @@ public class EsBlogRepositoryTests {
 			System.out.println(esBlog.getTitle());
 			contentList.add(esBlog); //已经替换成了高亮后的内容
 		}
+	}
+
+	@Test
+	public void saveTest1() {
+		EsBlog blog = new EsBlog(7L, "title", "summary", "content", "username", "avatar",
+				new Timestamp(System.currentTimeMillis()), 0, 0, 0, "TAGS");
+		IndexQuery indexQuery = new IndexQuery();
+		indexQuery.setObject(blog);
+		elasticsearchTemplate.index(indexQuery); //插入
+		System.out.println(blog.getId());
+		indexQuery.setObject(blog);
+		elasticsearchTemplate.index(indexQuery); //更新id
+		elasticsearchTemplate.refresh("blog");
 	}
 }
